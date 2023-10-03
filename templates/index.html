@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LectureLinker</title>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">LectureLinker</h1>
+        <h2>Choose one or more courses:</h2>
+        
+        <div class="form-group">
+            <select id="courses" name="courses" multiple class="form-control">
+                <option value="math">Lineare Algebra</option>
+                <option value="science">Diskrete Mathematik</option>
+                <option value="history">Einführung in die Programmierung</option>
+                <option value="english">Algorithmen und Datenstrukturen</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <input type="submit" class="btn btn-primary">
+        </div>
+        <br>
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th></th>
+                    <th>Filename</th>
+                    <th>Download</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in pdf_list %}
+                <tr>
+                    <td><input type="checkbox"></td>
+                    <td>{{ entry.rsplit('/', 1)[-1] }}</td>
+                    <td><a target="_blank" href="{{ entry }}">Link</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <button class="btn btn-primary">Download selection</button>
+        <br><br><br><br>
+
+    </div>
+</body>
+</html>
