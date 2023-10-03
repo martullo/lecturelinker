@@ -1,7 +1,9 @@
 # lecturelinker
 
-###Running the webserver###
+##Running the webserver
+
 Run app.py
+
 ```
 python app.py
 ```
