@@ -11,6 +11,7 @@
         <h1 class="text-center">LectureLinker</h1>
         <h2>Choose one or more courses:</h2>
         
+        <!-- selection doesn't update the table - subject is hardcoded -->
         <div class="form-group">
             <select id="courses" name="courses" multiple class="form-control">
                 <option value="math">Lineare Algebra</option>
@@ -42,7 +43,8 @@
                 {% endfor %}
             </tbody>
         </table>
-
+        
+        <!-- doesn't yet download the selection - button should redirect to app/download with list of files in params -->
         <button class="btn btn-primary">Download selection</button>
         <br><br><br><br>
 

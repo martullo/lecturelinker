@@ -4,11 +4,12 @@ from playwright.sync_api import sync_playwright
 
 def get_list(url):
     with sync_playwright() as p:
+        # later the browser shouldn't be opened and closed in this function - each request would start a new browser 
         browser = p.chromium.launch()
         page = browser.new_page()
 
         page.goto(url)
-        # Content loads quick enough so that no timeout is needed
+        # page.wait not needed since most javascript which loads data runs onload
         # page.wait_for_timeout(10)
 
         pdf_links = []
