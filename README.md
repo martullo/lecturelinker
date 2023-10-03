@@ -16,9 +16,9 @@ Running the webserver
 Run app.py with python(3):
 
 ```
-python app.py
+$ python app.py
 ```
 Or
 ```
-python3 app.py
+$ python3 app.py
 ```
