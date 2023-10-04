@@ -12,11 +12,11 @@ $ pip3 install Flask
 ```
 3. Install playwright
 ```
-pip install playwright
+$ pip install playwright
 ```
 Or
 ```
-pip3 install playwright
+$ pip3 install playwright
 ```
 
 Running the webserver
