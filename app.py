@@ -1,9 +1,7 @@
 from flask import Flask, render_template, send_file, request
 import requests
 from io import BytesIO
-import os
 from zipfile import ZipFile
-from random import randint
 
 import pdf_scraper
 
@@ -20,8 +18,6 @@ def home():
 
 @app.route('/download', methods=['GET'])
 def download():
-    # function to download zip of multiple pdfs
-    # not working - only returning one pdf and not in zip
     args = request.args
     files = []
     for url in args.values():
