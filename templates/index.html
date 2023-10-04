@@ -36,7 +36,7 @@
             <tbody>
                 {% for entry in pdf_list %}
                 <tr>
-                    <td><input type="checkbox"></td>
+                    <td><input type="checkbox" name="selected_files" value="{{ entry }}"></td>
                     <td>{{ entry.rsplit('/', 1)[-1] }}</td>
                     <td><a target="_blank" href="{{ entry }}">Link</a></td>
                 </tr>
@@ -44,10 +44,11 @@
             </tbody>
         </table>
         
-        <!-- doesn't yet download the selection - button should redirect to app/download with list of files in params -->
-        <button class="btn btn-primary">Download selection</button>
+        <button class="btn btn-primary" id="download-button">Download selection</button>
         <br><br><br><br>
 
     </div>
+    <script src="{{url_for('static', filename='main.js')}}"></script>
+
 </body>
 </html>
