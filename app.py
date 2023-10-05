@@ -2,17 +2,24 @@ from flask import Flask, render_template, send_file, request, url_for
 import requests
 from io import BytesIO
 from zipfile import ZipFile
+import json
 
 import pdf_scraper
 
+
 app = Flask(__name__)
 
-@app.route('/')
+with open('static/data.json', 'r') as f:
+    data = json.load(f)
+
+@app.route('/', methods=["POST", "GET"])
 def home():
-    # lecture website is now hardcoded - should be changed to what the user selects in the UI
-    pdf_list = pdf_scraper.get_list(
-        "https://cadmo.ethz.ch/education/lectures/HS23/DA/index.html")
-    print(pdf_list)
+    if request.method == "POST":
+        pdf_list = pdf_scraper.get_list(data[request.form['courses']])
+    else:
+        #change to an arbitrary
+        pdf_list = pdf_scraper.get_list(list(data.values())[0])
+
     return render_template("index.html", pdf_list=pdf_list)
 
 

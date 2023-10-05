@@ -1,14 +1,20 @@
 #PDF Scraper
 from playwright.sync_api import sync_playwright
-
+import time
 
 def get_list(url):
+    start = time.time()
+    #browser shouldn't be opened and closed in this function
     with sync_playwright() as p:
-        # later the browser shouldn't be opened and closed in this function - each request would start a new browser 
         browser = p.chromium.launch()
         page = browser.new_page()
+        print(time.time()-start)
 
+
+        start = time.time()
         page.goto(url)
+        print(time.time()-start)
+
         # page.wait not needed since most javascript which loads data runs onload
         # page.wait_for_timeout(10)
 
@@ -18,6 +24,7 @@ def get_list(url):
             if link.endswith('.pdf'):
                 pdf_links.append(link)
                 print(link)
-
+        
         browser.close()
+
         return pdf_links
