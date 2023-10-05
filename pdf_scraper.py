@@ -15,9 +15,6 @@ def get_list(url):
         page.goto(url)
         print(time.time()-start)
 
-        # page.wait not needed since most javascript which loads data runs onload
-        # page.wait_for_timeout(10)
-
         pdf_links = []
 
         for link in page.eval_on_selector_all('a', 'elements => elements.map(el => el.href)'):
