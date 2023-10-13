@@ -17,7 +17,7 @@ def home():
         if "courses" in request.form:
             pdf_list = pdf_scraper.get_list(data[request.form['courses']])
         elif "new_url" in request.form:
-            if request.form["new_url"] not in data.values():
+            if request.form["new_url"] not in data.values() and request.form["new_url"] != "":
                 data[request.form["display_name"]] = request.form["new_url"]
                 with open('static/data.json', 'w') as f:
                     write = json.dumps(data, indent=4)
