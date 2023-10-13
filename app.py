@@ -1,4 +1,4 @@
-from flask import Flask, render_template, send_file, request, url_for
+from flask import Flask, render_template, send_file, request, url_for, redirect
 import requests
 from io import BytesIO
 from zipfile import ZipFile
@@ -9,18 +9,28 @@ import pdf_scraper
 
 app = Flask(__name__)
 
-with open('static/data.json', 'r') as f:
-    data = json.load(f)
-
 @app.route('/', methods=["POST", "GET"])
 def home():
+    with open('static/data.json', 'r') as f:
+        data = json.load(f)
     if request.method == "POST":
-        pdf_list = pdf_scraper.get_list(data[request.form['courses']])
+        if "courses" in request.form:
+            pdf_list = pdf_scraper.get_list(data[request.form['courses']])
+        elif "new_url" in request.form:
+            if request.form["new_url"] not in data.values():
+                data[request.form["display_name"]] = request.form["new_url"]
+                with open('static/data.json', 'w') as f:
+                    write = json.dumps(data, indent=4)
+                    f.write(write)
+            else: 
+                pdf_list = pdf_scraper.get_list(list(data.values())[0])
+                return render_template("index.html", courses_list = data.keys(), pdf_list=pdf_list, show_alert=True)
+            return redirect(url_for('home'))
     else:
         #change to an arbitrary
         pdf_list = pdf_scraper.get_list(list(data.values())[0])
 
-    return render_template("index.html", pdf_list=pdf_list)
+    return render_template("index.html", courses_list = data.keys(), pdf_list=pdf_list, show_alert=False)
 
 
 @app.route('/download', methods=['GET'])

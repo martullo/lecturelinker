@@ -17,3 +17,8 @@ document
     const downloadLink = `/download?${queryString}`;
     window.location.href = downloadLink;
   });
+
+document.getElementById("close_alert").addEventListener("click", function () {
+  document.getElementById("alert").style.display = "none";
+  console.log("closed alert");
+});

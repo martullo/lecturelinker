@@ -18,14 +18,31 @@
       <div class="form-group">
         <form method="POST">
           <select id="courses" name="courses" class="form-control">
-            <option value="LA">Lineare Algebra</option>
-            <option value="DM">Diskrete Mathematik</option>
-            <option value="EP">Einführung in die Programmierung</option>
-            <option value="DA">Algorithmen und Datenstrukturen</option>
+            {% for course in courses_list %}
+              <option value={{course}}>{{course}}</option>
+            {% endfor %}
           </select>
           <br />
           <input type="submit" class="btn btn-primary" />
         </form>
+      </div>
+      <br />
+      <h2>Add a website:</h2>
+      <div class="form-group">
+        <form method="POST">
+          <div class="d-flex flex-row">
+            <input name="display_name" type="text" class="form-control" placeholder="Website Name">
+            <input name="new_url" type="url" class="form-control" placeholder="URL">
+          </div>
+          <br />
+          <input type="submit" class="btn btn-primary">
+        </form>
+        {% if show_alert %}
+          <div class="alert alert-danger d-flex justify-content-between" role="alert" id="alert">
+            <div>That URL is already on the list!</div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" id="close_alert">close</button>
+          </div>
+        {% endif %}
       </div>
       <br />
       <table class="table table-bordered table-striped">
