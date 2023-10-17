@@ -30,7 +30,7 @@ def home():
         #change to an arbitrary
         pdf_list = requests.get(f"http://localhost:3000/scrapedata?url={list(data.values())[0]}").json()
 
-    return render_template("index.html", courses_list = data.keys(), pdf_list=pdf_list, show_alert=False)
+    return render_template("index.html", courses_list=data.keys(), pdf_list=pdf_list, show_alert=False)
 
 
 @app.route('/download', methods=['GET'])
