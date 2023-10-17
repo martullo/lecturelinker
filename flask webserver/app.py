@@ -9,6 +9,39 @@ os.environ['NO_PROXY'] = '127.0.0.1'
 
 app = Flask(__name__)
 
+@app.route('/a', methods=["POST", "GET"])
+def _home():
+    courses_list = requests.get("http://localhost:3000/get-courses").json()
+
+    if request.method == "POST":
+        if (request.form["course_selection"]):
+            active_course = request.form["courses"]
+            pdf_list = requests.get(f"http://localhost:3000/?url={active_course}").json()
+
+
+    return render_template("index.html", courses_list=courses_list)
+
+    
+@app.route('/download', methods=['GET'])
+def _download():
+    #maybe handle this function locally
+    args = request.args
+    files = []
+    for url in args.values():
+        files.append((url.rsplit('/', 1)[-1], BytesIO(requests.get(url).content)))
+    
+    stream = BytesIO()
+    with ZipFile(stream, 'w') as zf:
+        for file in files:
+            zf.writestr(f'{file[0]}', file[1].getvalue())
+    stream.seek(0)
+
+    return send_file(
+        stream,
+        as_attachment=True,
+        download_name='files.zip'
+    )
+
 @app.route('/', methods=["POST", "GET"])
 def home():
     with open('static/data.json', 'r') as f:

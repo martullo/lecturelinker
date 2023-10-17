@@ -64,7 +64,31 @@ async function scrapeData(URL) {
   return scrapedData;
 }
 
-app.get("/get-file-links", async (req, res) => {
+//Periodically update the PDF models from the courses in Course model
+const updatePDFs = async () => {
+  const courses = await Course.find({}).exec();
+  for (const course of courses) {
+    const scrapedData = await scrapeData(course.mainWebsite);
+    for (const data of scrapedData) {
+      const pdf = await PDF.findOne({
+        course: course._id,
+        filename: data.filename,
+        link: data.link,
+      }).exec();
+      if (!pdf) {
+        const newPDF = new PDF({
+          course: course._id,
+          filename: data.filename,
+          link: data.link,
+        });
+        await newPDF.save();
+      }
+    }
+  }
+};
+setInterval(updatePDFs, 300_000);
+
+app.get("/get-links", async (req, res) => {
   try {
     // Query parameter
     const courseName = req.query.courseName;
@@ -80,11 +104,12 @@ app.get("/get-file-links", async (req, res) => {
 
       // Extract filename and link from the PDFs
       const formattedData = pdfs.map(
-        (item) => `${item.filename} - ${item.link}`
+        (item) => `<a href="${item.link}">${item.filename}</a> - ${item.link}`
       );
 
       // Return the formatted data to the browser
       res.send(formattedData.join("<br/><br/>"));
+      res.json(pdfs);
     } else {
       // If the course is not found, return a message indicating that
       res.status(404).json({ error: "Course not found" });
@@ -95,7 +120,7 @@ app.get("/get-file-links", async (req, res) => {
   }
 });
 
-app.get("/fill-db", async (req, res) => {
+app.get("/add-course", async (req, res) => {
   try {
     // Query parameters
     const courseName = req.query.courseName;
@@ -130,6 +155,20 @@ app.get("/fill-db", async (req, res) => {
   } catch (error) {
     console.error("Error while filling database:", error);
     res.status(500).json({ error: "An error occurred while filling database" });
+  }
+});
+
+app.get("/get-courses", async (req, res) => {
+  try {
+    //get list of courses
+    const courses = await Course.find({}).exec();
+    const courseNames = courses.map((course) => course.courseName);
+    res.json(courseNames);
+  } catch (error) {
+    console.error("Error while retrieving courses:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while retrieving courses" });
   }
 });
 
