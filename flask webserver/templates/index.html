@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Include Bootstrap CSS for styling -->
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <title>LectureLinker</title>
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h1 class="text-center">LectureLinker</h1>
+      <h2>Choose a course:</h2>
+      <div class="form-group">
+        <!-- Form for selecting a course -->
+        <form method="POST">
+          <select id="courses" name="courses" class="form-control">
+            {% if active_course %}
+            <option value="{{ active_course }}" selected>
+              {{ active_course }}
+            </option>
+            {% endif %} {% for course in courses_list if course != active_course
+            %}
+            <option value="{{ course }}">{{ course }}</option>
+            {% endfor %}
+          </select>
+          <br />
+          <input type="hidden" name="RequestType" value="course_selection" />
+          <input type="submit" class="btn btn-primary" />
+        </form>
+        <!--------------------------------->
+      </div>
+      <br />
+      <h2>Add a website:</h2>
+      <div class="form-group">
+        <!-- Form for adding a new course websites -->
+        <form method="POST">
+          <div class="d-flex flex-row">
+            <input
+              name="course_name"
+              type="text"
+              class="form-control"
+              placeholder="Course Name"
+            />
+            <input
+              name="course_url"
+              type="url"
+              class="form-control"
+              placeholder="URL"
+            />
+          </div>
+          <p class="mb-0">{{message_add_course}}</p>
+          <br />
+          <input type="hidden" name="RequestType" value="add_course" />
+          <input type="submit" class="btn btn-primary" />
+        </form>
+        <!------------------------------------------->
+      </div>
+      <br />
+
+      <!-- Form for downloading PDF files -->
+      <form action="/download" method="POST">
+        <!-- Table for displaying PDF files -->
+        <table class="table table-bordered table-striped">
+          <thead class="thead-dark">
+            <tr>
+              <th></th>
+              <th>Filename</th>
+              <th>Download</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Iterate through PDF entries and display them in the table -->
+            {% for entry in pdf_list %}
+            <tr>
+              <td>
+                <!-- Checkbox for selecting PDF files -->
+                <input
+                  type="checkbox"
+                  name="selected_files"
+                  value="{{ entry['link'] }}"
+                />
+              </td>
+              <td>{{ entry['filename'] }}</td>
+
+              <!-- Link to download the PDF file -->
+              <td><a target="_blank" href="{{ entry['link'] }}">Link</a></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <input type="submit" value="Download selection" class="btn btn-primary" />
+      </form>
+      <!------------------------------------>
+
+    <!-- Include a JavaScript file for client-side functionality -->    
+    <script src="{{url_for('static', filename='main.js')}}"></script>
+  </body>
+</html>
