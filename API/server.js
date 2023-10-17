@@ -11,7 +11,6 @@ mongoose.connect(
   }
 );
 
-// ------------------------------ New Code ------------------------------
 // Create a schema for courses, pdfs, and users
 const courseSchema = new mongoose.Schema({
   courseName: String,
@@ -33,7 +32,6 @@ const userSchema = new mongoose.Schema({
 const Course = mongoose.model("Course", courseSchema);
 const PDF = mongoose.model("PDF", pdfSchema);
 const User = mongoose.model("User", userSchema);
-// ----------------------------------------------------------------------
 
 const app = express();
 const port = 3000;
@@ -108,7 +106,7 @@ app.get("/get-links", async (req, res) => {
       );
 
       // Return the formatted data to the browser
-      res.send(formattedData.join("<br/><br/>"));
+      // res.send(formattedData.join("<br/><br/>"));
       res.json(pdfs);
     } else {
       // If the course is not found, return a message indicating that
@@ -126,6 +124,31 @@ app.get("/add-course", async (req, res) => {
     const courseName = req.query.courseName;
     const mainWebsite = req.query.mainWebsite;
 
+    // Check if the courseName already exists
+    const course = await Course.findOne({
+      courseName: new RegExp(courseName, "i"),
+    }).exec();
+
+    // If the course already exists, return a message indicating that
+    if (course) {
+      var message = "Course Name already exists";
+      res.status(409).json({ error: message, message: message });
+      return;
+    }
+
+    // Check if the mainWebsite already exists
+    const website = await Course.findOne({
+      mainWebsite: new RegExp(mainWebsite, "i"),
+    }).exec();
+
+    // If the mainWebsite already exists, return a message indicating that
+    if (website) {
+      var message =
+        "URL already exists under the name {name}. We recommend using the resources already set up. Alternatively, you can create a new entry.";
+      res.status(409).json({ error: message, message: message });
+      return;
+    }
+
     // Create a new course
     const newCourse = new Course({
       courseName: courseName,
@@ -134,10 +157,8 @@ app.get("/add-course", async (req, res) => {
 
     // Save the course to the database
     await newCourse.save();
-
     // Scrape the data from the main website
     const scrapedData = await scrapeData(mainWebsite);
-
     // Create a new PDF document for each scraped PDF
     for (const data of scrapedData) {
       const newPDF = new PDF({
@@ -149,9 +170,7 @@ app.get("/add-course", async (req, res) => {
       // Save the PDF to the database
       await newPDF.save();
     }
-
-    // Return a success message to the browser
-    res.send("Successfully filled database");
+    res.status(201).json({ message: "Course added successfully" });
   } catch (error) {
     console.error("Error while filling database:", error);
     res.status(500).json({ error: "An error occurred while filling database" });
