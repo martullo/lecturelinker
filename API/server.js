@@ -35,17 +35,6 @@ const PDF = mongoose.model("PDF", pdfSchema);
 const User = mongoose.model("User", userSchema);
 // ----------------------------------------------------------------------
 
-// ------------------------------ Old Code ------------------------------
-// Create a schema for scraped data
-const scrapedDataSchema = new mongoose.Schema({
-  filename: String,
-  link: String,
-});
-
-// Create a model from the schema
-const ScrapedData = mongoose.model("ScrapedData", scrapedDataSchema);
-// ----------------------------------------------------------------------
-
 const app = express();
 const port = 3000;
 
@@ -141,56 +130,6 @@ app.get("/fill-db", async (req, res) => {
   } catch (error) {
     console.error("Error while filling database:", error);
     res.status(500).json({ error: "An error occurred while filling database" });
-  }
-});
-
-// for links that look like this: http://localhost:3000/scrapedata?url=[URL]
-app.get("/scrapedata", async (req, res) => {
-  try {
-    const scrapedData = await scrapeData(req.query.url);
-
-    for (const data of scrapedData) {
-      await ScrapedData.findOneAndUpdate(
-        { filename: data.filename }, // The unique identifier for the document
-        data, // The data you want to add/update
-        { upsert: true } // Use 'upsert' to insert if not found, update if found
-      );
-    }
-    res.json(scrapedData);
-  } catch (error) {
-    console.error("Error during scraping:", error);
-    res.status(500).json({ error: "An error occurred during scraping" });
-  }
-});
-
-app.get("/getscrapedata", async (req, res) => {
-  try {
-    const data = await ScrapedData.find().exec();
-
-    //format data with line breaks
-    const formattedData = data.map((item) => `${item.filename} - ${item.link}`);
-    // Return formatted data to browser
-    res.send(formattedData.join("<br/><br/>"));
-  } catch (error) {
-    console.error("Error while retrieving scraped data:", error);
-    res.status(500).json({ error: "An error occurred while retrieving data" });
-  }
-});
-
-// Endpoint to access files stored in database by course name
-app.get("/getscrapedatabycourse", async (req, res) => {
-  try {
-    const data = await ScrapedData.find({
-      filename: { $regex: req.query.course, $options: "i" },
-    }).exec();
-
-    //format data with line breaks
-    const formattedData = data.map((item) => `${item.filename} - ${item.link}`);
-    // Return formatted data to browser
-    res.send(formattedData.join("<br/><br/>"));
-  } catch (error) {
-    console.error("Error while retrieving scraped data:", error);
-    res.status(500).json({ error: "An error occurred while retrieving data" });
   }
 });
 
